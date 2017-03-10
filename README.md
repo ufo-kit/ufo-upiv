@@ -5,10 +5,10 @@ upiv code using ufo framework
 ## How to use
 
 1. Install ufo-core and ufo-filters from https://github.com/ufo-kit
-2. Compile filters
-  * mkdir build; cd build/
-  * cmake ..
-  * make; make install
+2. Compile plugins
+  * `mkdir build; cd build/`
+  * `cmake ..`
+  * `make; make install`
 3. source filters/SourceMe.sh
 
 ## Sample data files

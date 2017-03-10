@@ -1,16 +1,21 @@
 #!/usr/bin/env python
+
 import os
 import sys
-prj_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.insert(0, prj_root)
-
 import argparse
 import ConfigParser
+import gi
+
+gi.require_version('Ufo', '0.0')
+
 from gi.repository import Ufo
 from upiv.ufo_extension import TaskGraph, PluginManager
 from upiv.ddict import DotDict
 
-#{{{ read_parameters
+
+ROOT = os.path.abspath('.')
+
+
 def read_parameters():
     # parse command line arguments
     parser = argparse.ArgumentParser()
@@ -19,7 +24,7 @@ def read_parameters():
     args = parser.parse_args(sys.argv[1:])
 
     # config file
-    config_file = os.path.join(prj_root, 'config', 'hough_%s.cfg' % args.dataset)
+    config_file = os.path.join(ROOT, 'config', 'hough_%s.cfg' % args.dataset)
     cf_parser = ConfigParser.ConfigParser()
 
     # parse configuration file
@@ -36,8 +41,8 @@ def read_parameters():
         config['profiling'] = args.profiling
 
     return DotDict(parms), DotDict(config)
-#}}}
-#{{{ load_filters
+
+
 def load_filters(parms):
     filters = DotDict({})
     scale = parms.scale
@@ -46,10 +51,10 @@ def load_filters(parms):
     in_path = os.path.abspath(parms.in_path)
 
     out_imag = parms.get('output_img') or 'otuput/res.tif'
-    out_imag = os.path.join(prj_root, out_imag)
+    out_imag = os.path.join(ROOT, out_imag)
 
     out_ring = parms.get('output_ring') or 'output/res.txt'
-    out_ring = os.path.join(prj_root, out_ring)
+    out_ring = os.path.join(ROOT, out_ring)
 
     filters['write'] = {
         'property': {
@@ -152,7 +157,7 @@ def load_filters(parms):
     }
 
     return filters
-#}}}
+
 
 def main():
     parms, config = read_parameters()
