@@ -1,7 +1,9 @@
 # ufo-upiv
+
 upiv code using ufo framework
 
 ## How to use
+
 1. Install ufo-core and ufo-filters from https://github.com/ufo-kit
 2. Compile filters
   * mkdir build; cd build/
@@ -11,8 +13,3 @@ upiv code using ufo framework
 
 ## Sample data files
 They are shared via [google drive](https://drive.google.com/folderview?id=0B-Nh7TaS6iJlfmN4bWtBb0xpc3NscElfY1czVGpjTGk1ZkFOQVdvRDVLOXlMdUU2SW5KT2M&usp=sharing). They should be copied to the paths that are relative to the project root.
-
-
-## Notice
-
-* Dir filters/ contains the filters made for upiv project. By sourcing the file in step 3, customized path for filters and kernels are set, and the ufo framework know where to look for these filters.
