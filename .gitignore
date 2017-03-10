@@ -8,10 +8,9 @@
 *.json
 .*.json
 .*.log
+*.cfg
 
 doc
 *test*.py
 res*
 *tmp*
-Notes.md
-
