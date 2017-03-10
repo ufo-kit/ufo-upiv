@@ -19,21 +19,18 @@ ROOT = os.path.abspath('.')
 def read_parameters():
     # parse command line arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('dataset', nargs='?', default='SampleC')
+    parser.add_argument('-c', '--config', required=True)
     parser.add_argument('-p', '--profiling', action='store_true', default=False)
-    args = parser.parse_args(sys.argv[1:])
+    args = parser.parse_args()
 
-    # config file
-    config_file = os.path.join(ROOT, 'config', 'hough_%s.cfg' % args.dataset)
     cf_parser = ConfigParser.ConfigParser()
 
     # parse configuration file
-    if cf_parser.read(config_file) != []:
-        print "Configuration: ", config_file
+    if cf_parser.read(args.config) != []:
         parms = {k: eval(v) for k,v in cf_parser.items('parms')}
         config = {k: eval(v) for k,v in cf_parser.items('config')}
     else:
-        print "Unable to open configuration file", config_file
+        print("Unable to open {}".format(args.config))
         sys.exit(-1)
 
     # overwrite config/parms with command line arguments
@@ -50,10 +47,10 @@ def load_filters(parms):
 
     in_path = os.path.abspath(parms.in_path)
 
-    out_imag = parms.get('output_img') or 'otuput/res.tif'
+    out_imag = parms.get('output_img') or 'res.tif'
     out_imag = os.path.join(ROOT, out_imag)
 
-    out_ring = parms.get('output_ring') or 'output/res.txt'
+    out_ring = parms.get('output_ring') or 'res.txt'
     out_ring = os.path.join(ROOT, out_ring)
 
     filters['write'] = {
