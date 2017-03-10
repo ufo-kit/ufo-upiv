@@ -27,30 +27,30 @@ def read_parameters():
 
     # parse configuration file
     if cf_parser.read(args.config) != []:
-        parms = {k: eval(v) for k,v in cf_parser.items('parms')}
+        params = {k: eval(v) for k,v in cf_parser.items('piv')}
         config = {k: eval(v) for k,v in cf_parser.items('config')}
     else:
         print("Unable to open {}".format(args.config))
         sys.exit(-1)
 
-    # overwrite config/parms with command line arguments
+    # overwrite config/params with command line arguments
     if args.profiling:
         config['profiling'] = args.profiling
 
-    return DotDict(parms), DotDict(config)
+    return DotDict(params), DotDict(config)
 
 
-def load_filters(parms):
+def load_filters(params):
     filters = DotDict({})
-    scale = parms.scale
-    parms.ring_number = (parms.ring_end - parms.ring_start) / parms.ring_step
+    scale = params.scale
+    params.ring_number = (params.ring_end - params.ring_start) / params.ring_step
 
-    in_path = os.path.abspath(parms.in_path)
+    in_path = os.path.abspath(params.in_path)
 
-    out_imag = parms.get('output_img') or 'res.tif'
+    out_imag = params.get('output_img') or 'res.tif'
     out_imag = os.path.join(ROOT, out_imag)
 
-    out_ring = parms.get('output_ring') or 'res.txt'
+    out_ring = params.get('output_ring') or 'res.txt'
     out_ring = os.path.join(ROOT, out_ring)
 
     filters['write'] = {
@@ -66,13 +66,13 @@ def load_filters(parms):
     filters['read'] = {
         'property': {
             'path': in_path,
-            'number': parms.number
+            'number': params.number
         }
     }
     filters['crop'] = {
         'property': {
-            'x': parms.xshift,
-            'y': parms.yshift,
+            'x': params.xshift,
+            'y': params.yshift,
             'width': 1024,
             'height':1024
         }
@@ -80,9 +80,9 @@ def load_filters(parms):
     filters['contrast'] = {
         'name': 'piv_contrast',
         'property': {
-            'c1': parms.contrast_c1,
-            'c2': parms.contrast_c2,
-            'gamma': parms.contrast_gamma
+            'c1': params.contrast_c1,
+            'c2': params.contrast_c2,
+            'gamma': params.contrast_gamma
         }
     }
     filters['rescale'] = {
@@ -98,14 +98,14 @@ def load_filters(parms):
     }
     filters['ring_stack'] = {
         'name': 'stack',
-        'property': {'number': parms.ring_number}
+        'property': {'number': params.ring_number}
     }
     filters['bc_image'] = {
         'name': 'broadcast'
     }
     filters['ring_loop'] = {
         'name': 'loop',
-        'property': {'number': parms.number}
+        'property': {'number': params.number}
     }
     filters['ring_convolution'] = {
         'name': 'complex_mult'
@@ -115,13 +115,13 @@ def load_filters(parms):
     }
     filters['ring_pattern'] = {
         'property': {
-            'start': parms.ring_start/scale,
-            'end': parms.ring_end/scale,
-            'step': parms.ring_step/scale,
-            'thickness': parms.ring_thickness/scale,
-            'method': parms.ring_method,
-            'width': parms.width/scale,
-            'height': parms.height/scale
+            'start': params.ring_start/scale,
+            'end': params.ring_end/scale,
+            'step': params.ring_step/scale,
+            'thickness': params.ring_thickness/scale,
+            'method': params.ring_method,
+            'width': params.width/scale,
+            'height': params.height/scale
         }
     }
     filters['ifft'] = {
@@ -130,26 +130,26 @@ def load_filters(parms):
     filters['likelihood'] = {
         'name': 'hough-likelihood',
         'property': {
-            'masksize': parms.likelihoodmask,
-            'maskinnersize': parms.likelihoodmaskinner,
-            'threshold': parms.thld_likely
+            'masksize': params.likelihoodmask,
+            'maskinnersize': params.likelihoodmaskinner,
+            'threshold': params.thld_likely
         }
     }
     filters['candidate'] = {
         'name': 'candidate-filter',
         'property': {
-            'ring_start': parms.ring_start,
-            'ring_step': parms.ring_step,
-            'ring_end': parms.ring_end,
-            'scale': parms.scale
+            'ring_start': params.ring_start,
+            'ring_step': params.ring_step,
+            'ring_end': params.ring_end,
+            'scale': params.scale
         }
     }
     filters['azimu'] = {
         'name': 'azimuthal-test',
         'property': {
-            'thread': parms.threads,
-            'azimu_thld': parms.thld_azimu,
-            'likelihood_thld': parms.thld_likely,
+            'thread': params.threads,
+            'azimu_thld': params.thld_azimu,
+            'likelihood_thld': params.thld_likely,
         }
     }
 
@@ -157,8 +157,8 @@ def load_filters(parms):
 
 
 def main():
-    parms, config = read_parameters()
-    filters = load_filters(parms)
+    params, config = read_parameters()
+    filters = load_filters(params)
 
     pm = PluginManager()
     g = TaskGraph()
