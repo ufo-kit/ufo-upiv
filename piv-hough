@@ -108,7 +108,7 @@ def load_filters(parms):
     }
     filters['ring_loop'] = {
         'name': 'loop',
-        'property': {'count': parms.number}
+        'property': {'number': parms.number}
     }
     filters['ring_convolution'] = {
         'name': 'complex_mult'
