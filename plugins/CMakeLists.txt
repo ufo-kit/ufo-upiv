@@ -44,9 +44,9 @@ include(PkgConfigVars)
 
 find_package(PkgConfig REQUIRED)
 find_package(OpenCL REQUIRED)
-find_package(GSL REQUIRED)
 
 pkg_check_modules(UFO ufo>=${UFO_CORE_MINIMUM} REQUIRED)
+pkg_check_modules(GSL gsl)
 pkg_check_modules(OCLFFT oclfft REQUIRED)
 
 pkg_check_variable(ufo plugindir)
@@ -54,6 +54,7 @@ pkg_check_variable(ufo kerneldir)
 
 link_directories(
     ${UFO_LIBRARY_DIRS}
+    ${GSL_LIBRARY_DIRS}
     ${OCLFFT_LIBRARY_DIRS})
 
 include_directories(
@@ -95,6 +96,8 @@ foreach(_src ${ufofilter_SRCS})
 
     target_link_libraries(${target}
         ${UFO_LIBRARIES}
+        ${GSL_LIBRARIES}
+        ${OPENCL_LIBRARIES}
         oclfft)
 
     install(TARGETS ${target}
