@@ -19,8 +19,8 @@ ROOT = os.path.abspath('.')
 def read_parameters():
     # parse command line arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--config', required=True)
     parser.add_argument('-p', '--profiling', action='store_true', default=False)
+    parser.add_argument('config', type=str, help="Config file")
     args = parser.parse_args()
 
     cf_parser = ConfigParser.ConfigParser()
