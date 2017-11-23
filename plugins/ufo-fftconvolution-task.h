@@ -64,7 +64,7 @@ GType     ufo_fftconvolution_task_get_type  (void);
 void ufo_buffer_copy_page(UfoBuffer *src, UfoBuffer *dst, const guint n, cl_command_queue cmd_queue);
 void ufo_buffer_past_page(cl_command_queue cmd_queue, UfoBuffer *src, UfoBuffer *dst, const guint n);
 void ufo_buffer_pad_zero(cl_command_queue cmd_queue, cl_kernel *kernel, UfoBuffer *src_buf, UfoBuffer *dst_buf);
-cl_int ufo_buffer_fill_zero(cl_command_queue cmd_queue, cl_kernel *kernel, UfoBuffer *buf);
+void ufo_buffer_fill_zero(cl_command_queue cmd_queue, cl_kernel *kernel, UfoBuffer *buf);
 void ufo_buffer_fftpack (cl_command_queue cmd_queue, cl_kernel *kernel, UfoBuffer *src_buf, UfoBuffer *dst_buf);
 
 G_END_DECLS

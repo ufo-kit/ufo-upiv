@@ -109,10 +109,10 @@ ufo_device_info_task_process (UfoTask *task,
     clGetDeviceInfo(device_id, CL_DEVICE_LOCAL_MEM_SIZE, sizeof(cl_ulong), &local_mem_size, NULL);
     clGetDeviceInfo(device_id, CL_DEVICE_MAX_COMPUTE_UNITS, sizeof(cl_uint), &max_compute_units, NULL);
 
-    g_message ("device id: %u", device_id);
+    g_message ("device id: %p", (gpointer) device_id);
     g_message ("work_item_dim: %d", work_item_dim);
-    g_message ("work_item_sizes: %d %d %d", work_item_sizes[0], work_item_sizes[1], work_item_sizes[2]);
-    g_message ("work_group_size: %d", work_group_size);
+    g_message ("work_item_sizes: %zu %zu %zu", work_item_sizes[0], work_item_sizes[1], work_item_sizes[2]);
+    g_message ("work_group_size: %zu", work_group_size);
     g_message ("local_mem_size: %lu", local_mem_size);
     g_message ("maximum compute units: %u", max_compute_units);
 
@@ -125,8 +125,6 @@ ufo_device_info_task_set_property (GObject *object,
                               const GValue *value,
                               GParamSpec *pspec)
 {
-    UfoDeviceInfoTaskPrivate *priv = UFO_DEVICE_INFO_TASK_GET_PRIVATE (object);
-
     switch (property_id) {
         case PROP_TEST:
             break;
@@ -142,8 +140,6 @@ ufo_device_info_task_get_property (GObject *object,
                               GValue *value,
                               GParamSpec *pspec)
 {
-    UfoDeviceInfoTaskPrivate *priv = UFO_DEVICE_INFO_TASK_GET_PRIVATE (object);
-
     switch (property_id) {
         case PROP_TEST:
             break;

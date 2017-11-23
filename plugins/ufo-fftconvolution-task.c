@@ -259,7 +259,7 @@ void ufo_buffer_past_page(cl_command_queue cmd_queue,
                                       0,NULL,NULL));
 }
 
-cl_int ufo_buffer_fill_zero(cl_command_queue cmd_queue, cl_kernel *kernel, UfoBuffer *buf)
+void ufo_buffer_fill_zero(cl_command_queue cmd_queue, cl_kernel *kernel, UfoBuffer *buf)
 {
     g_return_if_fail ( UFO_IS_BUFFER (buf) );
 

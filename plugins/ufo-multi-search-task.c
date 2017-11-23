@@ -388,89 +388,11 @@ create_profile_advanced (UfoMultiSearchTaskPrivate *priv, UfoBuffer *image,
     }
 }
 
-static char
-center_search (UfoMultiSearchTaskPrivate *priv, UfoBuffer *image,
-        UfoRingCoordinate *src, UfoRingCoordinate *dst)
-{
-    float a, b, c;
-    /* Compute polynomial aX^2 + bX + c */
-    create_profile_advanced(priv, image, src, &a, &b, &c);
-    /* When contrast is too low, we delete ring */
-    /* A represents the steepness of the polynomial, the more steep i-e the more
-     * negative a is, the more contrast we have.  The ideal function is a
-     * dirac */
-    if (a <= -priv->threshold) {
-        *dst = *src;
-        dst->contrast = a;
-        return 1;
-    }
-
-    return 0;
-}
-
-
 static void azimuthal_wrapper(gpointer data, gpointer user_data)
 {
     azimu_thread *parm = (azimu_thread*) data;
     create_profile_advanced(parm->priv, parm->image, parm->center,parm->a,parm->b,parm->c);
 }
-
-//Function will read out current amount of threads and based on it it will return the division
-//factor for the thredas
-static unsigned thread_division(unsigned threads, unsigned max_threads,unsigned local_max_threads,unsigned* part_threads, unsigned *rest)
-{
-
-    system("ps -eo nlwp | tail -n +2 | awk '{ num_threads += $1 } END { print num_threads }' > threads.txt");
-    FILE *file;
-    int ap_threads;
-    unsigned total;
-    file = fopen("threads.txt","r");
-    if(file == NULL)
-    {
-        printf("COULD NOT OPEN FILE \n");
-        part_threads[0] = threads/4;
-        rest[0] = 0;
-        return 4;
-    }
-
-    fscanf(file,"%d",&ap_threads);
-    fclose(file);
-    total = threads + ap_threads;
-    if(total >  max_threads)
-    {
-
-        for(unsigned g = 1; g < threads; g++)
-        {
-            part_threads[0] = threads/g;
-            if(part_threads[0] + ap_threads < max_threads && part_threads[0] < local_max_threads)
-            {
-
-                if(threads % g != 0)
-                {
-                    rest[0] = threads % g;
-                }
-                else
-                {
-                    rest[0] = 0;
-                }
-
-                return g;
-            }
-        }
-    
-        rest[0] = 0;
-        part_threads[0] = 1; 
-        return threads;
-    }
-    else
-    {
-        part_threads[0] = threads;
-        rest[0] = 0;
-        return 1;
-    } 
-}
-
-
 
 static gboolean
 ufo_multi_search_task_process (UfoTask *task,

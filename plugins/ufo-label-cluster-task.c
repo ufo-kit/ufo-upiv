@@ -167,8 +167,6 @@ ufo_label_cluster_task_set_property (GObject *object,
                               const GValue *value,
                               GParamSpec *pspec)
 {
-    UfoLabelClusterTaskPrivate *priv = UFO_LABEL_CLUSTER_TASK_GET_PRIVATE (object);
-
     switch (property_id) {
         case PROP_TEST:
             break;
@@ -184,8 +182,6 @@ ufo_label_cluster_task_get_property (GObject *object,
                               GValue *value,
                               GParamSpec *pspec)
 {
-    UfoLabelClusterTaskPrivate *priv = UFO_LABEL_CLUSTER_TASK_GET_PRIVATE (object);
-
     switch (property_id) {
         case PROP_TEST:
             break;

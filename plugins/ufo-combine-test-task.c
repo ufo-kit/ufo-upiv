@@ -151,8 +151,6 @@ ufo_combine_test_task_set_property (GObject *object,
                               const GValue *value,
                               GParamSpec *pspec)
 {
-    UfoCombineTestTaskPrivate *priv = UFO_COMBINE_TEST_TASK_GET_PRIVATE (object);
-
     switch (property_id) {
         case PROP_TEST:
             break;
@@ -168,8 +166,6 @@ ufo_combine_test_task_get_property (GObject *object,
                               GValue *value,
                               GParamSpec *pspec)
 {
-    UfoCombineTestTaskPrivate *priv = UFO_COMBINE_TEST_TASK_GET_PRIVATE (object);
-
     switch (property_id) {
         case PROP_TEST:
             break;
