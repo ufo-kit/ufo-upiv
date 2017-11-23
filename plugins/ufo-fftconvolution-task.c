@@ -316,7 +316,6 @@ ufo_fftconvolution_task_process (UfoTask *task,
     UfoRequisition req_tmp;
     UfoBuffer *tmp_buffer;
     gsize global_work_size[2];
-    cl_event event;
 
     UfoFftconvolutionTaskPrivate *priv;
     priv = UFO_FFTCONVOLUTION_TASK_GET_PRIVATE (task);
@@ -341,7 +340,7 @@ ufo_fftconvolution_task_process (UfoTask *task,
     clFFT_ExecuteInterleaved_Ufo (priv->cmd_queue, priv->fft_plan,
                                   1, clFFT_Forward,
                                   priv->fft_mem_1, priv->fft_mem_1,
-                                  1, &event, NULL, priv->profiler);
+                                  0, NULL, NULL, priv->profiler);
 #endif
 
     for (guint i = 0; i < priv->batch_size; i++) {
@@ -353,15 +352,14 @@ ufo_fftconvolution_task_process (UfoTask *task,
         clFFT_ExecuteInterleaved_Ufo (priv->cmd_queue, priv->fft_plan,
                                       1, clFFT_Forward,
                                       priv->fft_mem_2, priv->fft_mem_2,
-                                      1, &event, NULL, priv->profiler);
+                                      0, NULL, NULL, priv->profiler);
 #endif
 
         UFO_RESOURCES_CHECK_CLERR (clSetKernelArg (priv->kernel_fftmult, 0, sizeof (cl_mem), (gpointer) &( priv->fft_mem_1)));
         UFO_RESOURCES_CHECK_CLERR (clSetKernelArg (priv->kernel_fftmult, 1, sizeof (cl_mem), (gpointer) &( priv->fft_mem_2)));
         UFO_RESOURCES_CHECK_CLERR (clSetKernelArg (priv->kernel_fftmult, 2, sizeof (cl_mem), (gpointer) &( priv->fft_mem_2)));
-        UFO_RESOURCES_CHECK_CLERR (clEnqueueNDRangeKernel (priv->cmd_queue, priv->kernel_fftmult,
-                                                           2, NULL, global_work_size, NULL,
-                                                           0, NULL, &event));
+
+        ufo_profiler_call (priv->profiler, priv->cmd_queue, priv->kernel_fftmult, 2, global_work_size, NULL);
 
         // Inverse FFT
 #ifdef HAVE_AMD
@@ -369,13 +367,11 @@ ufo_fftconvolution_task_process (UfoTask *task,
         clFFT_ExecuteInterleaved_Ufo (priv->cmd_queue, priv->fft_plan,
                                       1, clFFT_Inverse,
                                       priv->fft_mem_2, priv->fft_mem_2,
-                                      1, &event, NULL, priv->profiler);
+                                      0, NULL, NULL, priv->profiler);
 #endif
 
         ufo_buffer_fftpack (priv->cmd_queue, priv->kernel_fftpack, priv->fft_buffer_2, tmp_buffer);
         ufo_buffer_past_page (priv->cmd_queue, tmp_buffer, output, i);
-
-        UFO_RESOURCES_CHECK_CLERR (clReleaseEvent (event));
     }
 
     g_object_unref(tmp_buffer);

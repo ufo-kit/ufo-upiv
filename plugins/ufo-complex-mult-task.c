@@ -102,6 +102,7 @@ ufo_complex_mult_task_process (UfoTask *task,
 {
     UfoComplexMultTaskPrivate *priv;
     UfoGpuNode *node;
+    UfoProfiler *profiler;
     UfoRequisition req0;
     UfoRequisition req1;
     cl_command_queue cmd_queue;
@@ -109,6 +110,7 @@ ufo_complex_mult_task_process (UfoTask *task,
     priv = UFO_COMPLEX_MULT_TASK_GET_PRIVATE (task);
     node = UFO_GPU_NODE (ufo_task_node_get_proc_node (UFO_TASK_NODE (task)));
     cmd_queue = ufo_gpu_node_get_cmd_queue (node);
+    profiler = ufo_task_node_get_profiler (UFO_TASK_NODE (task));
 
     ufo_buffer_get_requisition (inputs[0], &req0);
     ufo_buffer_get_requisition (inputs[1], &req1);
@@ -130,9 +132,7 @@ ufo_complex_mult_task_process (UfoTask *task,
     UFO_RESOURCES_CHECK_CLERR (clSetKernelArg (priv->k_mult, 1, sizeof (cl_mem), (gpointer) &(in_mem1)));
     UFO_RESOURCES_CHECK_CLERR (clSetKernelArg (priv->k_mult, 2, sizeof (cl_mem), (gpointer) &(out_mem)));
 
-    UFO_RESOURCES_CHECK_CLERR (clEnqueueNDRangeKernel (cmd_queue, priv->k_mult,
-                                                       3, NULL, global_work_size, NULL,
-                                                       0, NULL, NULL));
+    ufo_profiler_call (profiler, cmd_queue, priv->k_mult, 3, global_work_size, NULL);
 
     return TRUE;
 }
