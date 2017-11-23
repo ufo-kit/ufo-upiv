@@ -67,11 +67,7 @@ include_directories(
 # --- Variables
 
 if (CMAKE_COMPILER_IS_GNUCC OR ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang"))
-    add_definitions("-std=c99 -pedantic -Wall -Wextra -fPIC")
-    add_definitions("-Wcast-align -Wcast-qual -Winline -Wmissing-declarations "
-                    "-Wmissing-prototypes -Wnested-externs -Wno-long-long "
-                    "-Wno-missing-field-initializers -Wpointer-arith "
-                    "-Wredundant-decls -Wshadow -Wstrict-prototypes -Wwrite-strings")
+    add_definitions("-std=c99 -pedantic -Wall -Wextra -Wno-unused-parameter -fPIC")
 endif()
 
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp")
