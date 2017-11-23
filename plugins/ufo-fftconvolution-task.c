@@ -71,8 +71,8 @@ ufo_fftconvolution_task_new (void)
 
 static void
 ufo_fftconvolution_task_setup (UfoTask *task,
-                       UfoResources *resources,
-                       GError **error)
+                               UfoResources *resources,
+                               GError **error)
 {
     UfoFftconvolutionTaskPrivate *priv;
     UfoGpuNode *node;
@@ -332,7 +332,6 @@ ufo_fftconvolution_task_process (UfoTask *task,
 
     ufo_buffer_fill_zero (priv->cmd_queue, priv->kernel_fillzero, tmp_buffer);
 
-    // prepare the input image for FFT
     // pad zero to input image and save it to fft_buffer_1
     ufo_buffer_pad_zero (priv->cmd_queue, priv->kernel_padzero, inputs[0], priv->fft_buffer_1);
 

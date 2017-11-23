@@ -29,7 +29,6 @@
 
 struct _UfoCandidateFilterTaskPrivate {
     cl_kernel kernel;
-    cl_context context;
     guint ring_start;
     guint ring_step;
     guint ring_end;
@@ -64,23 +63,21 @@ ufo_candidate_filter_task_new (void)
 
 static void
 ufo_candidate_filter_task_setup (UfoTask *task,
-                       UfoResources *resources,
-                       GError **error)
+                                 UfoResources *resources,
+                                 GError **error)
 {
     UfoCandidateFilterTaskPrivate *priv = UFO_CANDIDATE_FILTER_TASK_GET_PRIVATE(task);
-    
-    priv->kernel = ufo_resources_get_kernel(resources, "candidate.cl", NULL, error);
+
+    priv->kernel = ufo_resources_get_kernel (resources, "candidate.cl", NULL, error);
 
     if (priv->kernel)
         UFO_RESOURCES_CHECK_CLERR(clRetainKernel(priv->kernel));
-
-    priv->context = ufo_resources_get_context(resources);
 }
 
 static void
 ufo_candidate_filter_task_get_requisition (UfoTask *task,
-                                 UfoBuffer **inputs,
-                                 UfoRequisition *requisition)
+                                           UfoBuffer **inputs,
+                                           UfoRequisition *requisition)
 {
     requisition->n_dims = 1;
     requisition->dims[0] = 1;
@@ -94,7 +91,7 @@ ufo_candidate_filter_task_get_num_inputs (UfoTask *task)
 
 static guint
 ufo_candidate_filter_task_get_num_dimensions (UfoTask *task,
-                                             guint input)
+                                              guint input)
 {
     return -1;
 }
@@ -105,63 +102,65 @@ ufo_candidate_filter_task_get_mode (UfoTask *task)
     return UFO_TASK_MODE_PROCESSOR | UFO_TASK_MODE_GPU;
 }
 
-static int compare_func (gconstpointer a, gconstpointer b)
+static int
+compare_func (gconstpointer a, gconstpointer b)
 {
     const UfoRingCoordinate *c = (const UfoRingCoordinate *) a;
     const UfoRingCoordinate *d = (const UfoRingCoordinate *) b;
-    if (c->x == d->x) return (int)(c->y - d->y);
+
+    if (c->x == d->x)
+        return (int)(c->y - d->y);
+
     return (int)(c->x - d->x);
 }
 
-static GList* sort_candidate (GList *list)
+static UfoRingCoordinate*
+get_ring (GList *l)
 {
-    return g_list_sort(list, compare_func);
-}
-
-/*
- *static void filter_neighbour (gpointer data, gpointer user_data) {
- *    UfoRingCoordinate *r = (UfoRingCoordinate *) data;
- *    UfoRingCoordinate *s = (UfoRingCoordinate *) user_data;
- *    if (fabs(r->x + r->y - s->x - s->y) < 5.0 && fabs(r->r - s->r) < 2.0)
- *        if (r->contrast < s->contrast)
- *            r->contrast = 0.0;
- *}
- */
-
-static UfoRingCoordinate* get_ring(GList *l) {
     UfoRingCoordinate *r = (UfoRingCoordinate *) l->data;
     return r;
 }
 
-static GList* filter_sort_candidate (GList *list)
+static GList*
+filter_sort_candidate (GList *list)
 {
-    list = sort_candidate(list);
+    list = g_list_sort (list, compare_func);
 
     // filter local peak in neighbouring fixels, set others to 0
-    for (GList *current=list; current; current=current->next) {
-        UfoRingCoordinate *r = get_ring(current);
-        if (r->contrast == 0.0f) continue;
-        for (GList *l = current->next; l; l=l->next) {
-            UfoRingCoordinate *s = get_ring(l);
-            if (fabs(r->x - s->x) > 5) break;
-            if (fabs(r->y - s->y) > 5) continue;
-            if (fabs(r->r - s->r) > 5) continue;
+    for (GList *current = list; current != NULL; current = g_list_next (current)) {
+        UfoRingCoordinate *r = get_ring (current);
+
+        if (r->contrast == 0.0f)
+            continue;
+
+        for (GList *l = g_list_next (current); l != NULL; l = g_list_next (l)) {
+            UfoRingCoordinate *s = get_ring (l);
+
+            if (fabs (r->x - s->x) > 5)
+                break;
+
+            if (fabs (r->y - s->y) > 5 || fabs (r->r - s->r) > 5)
+                continue;
+
             if (r->contrast > s->contrast) {
                 s->contrast = 0.0f;
-            } else {
+            }
+            else {
                 r->contrast = 0.0f;
                 break;
             }
         }
     }
 
-    // remove 0's 
-    for (GList *current=list; current;) {
+    // remove 0's
+    for (GList *current = list; current;) {
         GList *next = current->next;
         UfoRingCoordinate *r = (UfoRingCoordinate*) current->data;
-        if (fabs(r->contrast - 0.0f) < 0.000001f) {
-            list = g_list_remove_link(list, current);
+
+        if (fabs (r->contrast - 0.0f) < 0.000001f) {
+            list = g_list_remove_link (list, current);
         }
+
         current = next;
     }
 
@@ -170,9 +169,9 @@ static GList* filter_sort_candidate (GList *list)
 
 static gboolean
 ufo_candidate_filter_task_process (UfoTask *task,
-                         UfoBuffer **inputs,
-                         UfoBuffer *output,
-                         UfoRequisition *requisition)
+                                   UfoBuffer **inputs,
+                                   UfoBuffer *output,
+                                   UfoRequisition *requisition)
 {
     UfoCandidateFilterTaskPrivate *priv;
     UfoRingCoordinate *rings;
@@ -185,12 +184,12 @@ ufo_candidate_filter_task_process (UfoTask *task,
 
     cand_cpu = ufo_buffer_get_host_array (inputs[0], NULL);
 
-    rings = (UfoRingCoordinate*) &cand_cpu[2]; 
+    rings = (UfoRingCoordinate*) &cand_cpu[2];
     num_cand = cand_cpu[0];
 
-    for(int i = 0; i < num_cand; i++) {
+    for (int i = 0; i < num_cand; i++) {
         rings[i].r = (priv->ring_start + priv->ring_step * rings[i].r) / priv->scale;
-        cand_list = g_list_append(cand_list, (gpointer) &rings[i]);
+        cand_list = g_list_append (cand_list, (gpointer) &rings[i]);
     }
 
     // filter candidate neighbours
@@ -198,26 +197,26 @@ ufo_candidate_filter_task_process (UfoTask *task,
     num_cand = g_list_length (cand_list);
 
     req.n_dims = 1;
-    req.dims[0] = 2 + num_cand * sizeof(UfoRingCoordinate) / sizeof (float);
+    req.dims[0] = 2 + num_cand * sizeof (UfoRingCoordinate) / sizeof (float);
     ufo_buffer_resize(output, &req);
 
-    out_cpu = ufo_buffer_get_host_array(output,NULL);
+    out_cpu = ufo_buffer_get_host_array (output, NULL);
     out_cpu[0] = num_cand;
     out_cpu[1] = priv->scale;
 
     rings = (UfoRingCoordinate*) &out_cpu[2];
-    for (int i = 0; i < num_cand; i++) 
+
+    for (int i = 0; i < num_cand; i++)
         rings[i] = * (UfoRingCoordinate *) g_list_nth_data (cand_list, i);
 
-    /*g_message ("number of filtered candidate %d", num_cand);*/
     return TRUE;
 }
 
 static void
 ufo_candidate_filter_task_set_property (GObject *object,
-                              guint property_id,
-                              const GValue *value,
-                              GParamSpec *pspec)
+                                        guint property_id,
+                                        const GValue *value,
+                                        GParamSpec *pspec)
 {
     UfoCandidateFilterTaskPrivate *priv = UFO_CANDIDATE_FILTER_TASK_GET_PRIVATE (object);
 
@@ -243,9 +242,9 @@ ufo_candidate_filter_task_set_property (GObject *object,
 
 static void
 ufo_candidate_filter_task_get_property (GObject *object,
-                              guint property_id,
-                              GValue *value,
-                              GParamSpec *pspec)
+                                        guint property_id,
+                                        GValue *value,
+                                        GParamSpec *pspec)
 {
     UfoCandidateFilterTaskPrivate *priv = UFO_CANDIDATE_FILTER_TASK_GET_PRIVATE (object);
 
@@ -273,9 +272,9 @@ ufo_candidate_filter_task_finalize (GObject *object)
 {
     UfoCandidateFilterTaskPrivate *priv = UFO_CANDIDATE_FILTER_TASK_GET_PRIVATE (object);
 
-    if(priv->kernel)
-        UFO_RESOURCES_CHECK_CLERR(clReleaseKernel(priv->kernel));
-    
+    if (priv->kernel)
+        UFO_RESOURCES_CHECK_CLERR (clReleaseKernel (priv->kernel));
+
     G_OBJECT_CLASS (ufo_candidate_filter_task_parent_class)->finalize (object);
 }
 
@@ -299,19 +298,19 @@ ufo_candidate_filter_task_class_init (UfoCandidateFilterTaskClass *klass)
     oclass->get_property = ufo_candidate_filter_task_get_property;
     oclass->finalize = ufo_candidate_filter_task_finalize;
 
-    properties[PROP_RING_START] = 
+    properties[PROP_RING_START] =
         g_param_spec_uint ("ring_start",
                "", "",
                1, G_MAXUINT, 5,
                G_PARAM_READWRITE);
 
-    properties[PROP_RING_STEP] = 
+    properties[PROP_RING_STEP] =
         g_param_spec_uint ("ring_step",
                "", "",
                1, G_MAXUINT, 2,
                G_PARAM_READWRITE);
 
-    properties[PROP_RING_END] = 
+    properties[PROP_RING_END] =
         g_param_spec_uint ("ring_end",
                "", "",
                1, G_MAXUINT, 5,
