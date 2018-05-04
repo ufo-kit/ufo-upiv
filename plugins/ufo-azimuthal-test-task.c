@@ -353,7 +353,7 @@ ufo_azimuthal_test_task_process (UfoTask *task,
     int img_width = req.dims[0];
     int img_height = req.dims[1];
 
-    if (scale == 2) {
+    if (scale > 1) {
         for (unsigned i = 0; i < num_cand; i++) {
             cand[i].x *= scale;
             cand[i].y *= scale;
