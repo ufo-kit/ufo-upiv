@@ -73,8 +73,8 @@ def load_filters(params):
         'property': {
             'x': params.xshift,
             'y': params.yshift,
-            'width': 1024,
-            'height':1024
+            'width': params.width,
+            'height': params.height
         }
     }
     filters['contrast'] = {
