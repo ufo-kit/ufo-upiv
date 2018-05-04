@@ -319,7 +319,7 @@ ufo_candidate_filter_task_class_init (UfoCandidateFilterTaskClass *klass)
     properties[PROP_SCALE] =
         g_param_spec_uint ("scale",
                "Rescale factor", "",
-               1, 2, 1,
+               1, 4, 1,
                G_PARAM_READWRITE);
 
     for (guint i = PROP_0 + 1; i < N_PROPERTIES; i++)
