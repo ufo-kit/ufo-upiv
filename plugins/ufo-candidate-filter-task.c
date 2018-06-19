@@ -68,7 +68,7 @@ ufo_candidate_filter_task_setup (UfoTask *task,
 {
     UfoCandidateFilterTaskPrivate *priv = UFO_CANDIDATE_FILTER_TASK_GET_PRIVATE(task);
 
-    priv->kernel = ufo_resources_get_kernel (resources, "candidate.cl", NULL, error);
+    priv->kernel = ufo_resources_get_kernel (resources, "candidate.cl", NULL, NULL, error);
 
     if (priv->kernel)
         UFO_RESOURCES_CHECK_CLERR(clRetainKernel(priv->kernel));

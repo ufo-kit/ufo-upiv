@@ -82,10 +82,10 @@ ufo_fftconvolution_task_setup (UfoTask *task,
 
     priv->profiler = ufo_task_node_get_profiler (UFO_TASK_NODE (task));
 
-    priv->kernel_padzero  = ufo_resources_get_kernel (resources, "fft.cl", "fft_spread", error);
-    priv->kernel_fftpack  = ufo_resources_get_kernel (resources, "fft.cl", "fft_pack", error);
-    priv->kernel_fftmult  = ufo_resources_get_kernel (resources, "mult.cl", "mult", error);
-    priv->kernel_fillzero = ufo_resources_get_kernel (resources, "fillzero.cl", "fillzero", error);
+    priv->kernel_padzero  = ufo_resources_get_kernel (resources, "fft.cl", "fft_spread", NULL, error);
+    priv->kernel_fftpack  = ufo_resources_get_kernel (resources, "fft.cl", "fft_pack", NULL, error);
+    priv->kernel_fftmult  = ufo_resources_get_kernel (resources, "mult.cl", "mult", NULL, error);
+    priv->kernel_fillzero = ufo_resources_get_kernel (resources, "fillzero.cl", "fillzero", NULL, error);
 
     priv->context = ufo_resources_get_context (resources);
     priv->cmd_queue = ufo_gpu_node_get_cmd_queue (node);

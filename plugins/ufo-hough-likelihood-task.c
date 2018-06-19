@@ -75,7 +75,7 @@ ufo_hough_likelihood_task_setup (UfoTask *task,
 
     priv = UFO_HOUGH_LIKELIHOOD_TASK_GET_PRIVATE (task);
     priv->context = ufo_resources_get_context (resources);
-    priv->kernel = ufo_resources_get_kernel (resources, "hough.cl", "likelihood", error);
+    priv->kernel = ufo_resources_get_kernel (resources, "hough.cl", "likelihood", NULL, error);
 
     if (priv->kernel)
         UFO_RESOURCES_CHECK_CLERR(clRetainKernel(priv->kernel));

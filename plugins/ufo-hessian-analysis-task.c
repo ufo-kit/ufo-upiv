@@ -90,15 +90,14 @@ ufo_hessian_analysis_task_setup (UfoTask *task,
 
     UFO_RESOURCES_CHECK_CLERR (clRetainContext (priv->context));
 
-    priv->kernel_det  = ufo_resources_get_kernel (resources, "hessian.cl", "hessian_det", error);
-    if (priv->kernel_det != NULL) {
-        UFO_RESOURCES_CHECK_CLERR (clRetainKernel (priv->kernel_det));
-    }
+    priv->kernel_det = ufo_resources_get_kernel (resources, "hessian.cl", "hessian_det", NULL, error);
+    priv->kernel_eigval = ufo_resources_get_kernel (resources, "hessian.cl", "hessian_eigval", NULL, error);
 
-    priv->kernel_eigval  = ufo_resources_get_kernel (resources, "hessian.cl", "hessian_eigval", error);
-    if (priv->kernel_eigval != NULL) {
+    if (priv->kernel_det != NULL)
+        UFO_RESOURCES_CHECK_CLERR (clRetainKernel (priv->kernel_det));
+
+    if (priv->kernel_eigval != NULL)
         UFO_RESOURCES_CHECK_CLERR (clRetainKernel (priv->kernel_eigval));
-    }
 }
 
 static void

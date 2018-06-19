@@ -69,7 +69,7 @@ ufo_piv_contrast_task_setup (UfoTask *task,
     UfoPivContrastTaskPrivate *priv;
 
     priv = UFO_PIV_CONTRAST_TASK_GET_PRIVATE (task);
-    priv->sigmoid_kernel = ufo_resources_get_kernel (resources, "piv_contrast.cl", "sigmoid", error);
+    priv->sigmoid_kernel = ufo_resources_get_kernel (resources, "piv_contrast.cl", "sigmoid", NULL, error);
 
     if (priv->sigmoid_kernel != NULL)
         UFO_RESOURCES_CHECK_CLERR (clRetainKernel (priv->sigmoid_kernel));

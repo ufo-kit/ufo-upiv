@@ -66,12 +66,10 @@ ufo_local_maxima_task_setup (UfoTask *task,
     UfoLocalMaximaTaskPrivate* priv;
 
     priv = UFO_LOCAL_MAXIMA_TASK_GET_PRIVATE(task);
-    priv->locmax_kernel = ufo_resources_get_kernel(resources, "localmax.cl", NULL, error);
+    priv->locmax_kernel = ufo_resources_get_kernel (resources, "localmax.cl", NULL, NULL, error);
 
     if (priv->locmax_kernel != NULL)
-    {
         UFO_RESOURCES_CHECK_CLERR(clRetainKernel (priv->locmax_kernel));
-    }
 }
 
 static void

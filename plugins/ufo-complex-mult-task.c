@@ -55,7 +55,7 @@ ufo_complex_mult_task_setup (UfoTask *task,
 
     priv = UFO_COMPLEX_MULT_TASK_GET_PRIVATE (task);
     priv->profiler = ufo_task_node_get_profiler (UFO_TASK_NODE (task));
-    priv->k_mult = ufo_resources_get_kernel (resources, "mult.cl", "mult3d", error);
+    priv->k_mult = ufo_resources_get_kernel (resources, "mult.cl", "mult3d", NULL, error);
 
     if (priv->k_mult)
         UFO_RESOURCES_CHECK_CLERR (clRetainKernel (priv->k_mult));
