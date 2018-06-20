@@ -90,8 +90,9 @@ ufo_multi_search_task_setup (UfoTask *task,
 
 static void
 ufo_multi_search_task_get_requisition (UfoTask *task,
-        UfoBuffer **inputs,
-        UfoRequisition *requisition)
+                                       UfoBuffer **inputs,
+                                       UfoRequisition *requisition,
+                                       GError **error)
 {
     /* input[0] : contrasted image */
     /* input[1] : coordinate list */

@@ -72,7 +72,8 @@ ufo_azimuthal_test_task_setup (UfoTask *task,
 static void
 ufo_azimuthal_test_task_get_requisition (UfoTask *task,
                                          UfoBuffer **inputs,
-                                         UfoRequisition *requisition)
+                                         UfoRequisition *requisition,
+                                         GError **error)
 {
     ufo_buffer_get_requisition (inputs[1], requisition);
 }

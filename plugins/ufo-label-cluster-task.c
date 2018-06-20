@@ -65,8 +65,9 @@ ufo_label_cluster_task_setup (UfoTask *task,
 
 static void
 ufo_label_cluster_task_get_requisition (UfoTask *task,
-                                 UfoBuffer **inputs,
-                                 UfoRequisition *requisition)
+                                        UfoBuffer **inputs,
+                                        UfoRequisition *requisition,
+                                        GError **error)
 {
     UfoRequisition req_in;
     ufo_buffer_get_requisition (inputs[0], &req_in);

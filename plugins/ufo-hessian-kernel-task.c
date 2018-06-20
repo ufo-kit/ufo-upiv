@@ -93,8 +93,9 @@ ufo_hessian_kernel_task_setup (UfoTask *task,
 
 static void
 ufo_hessian_kernel_task_get_requisition (UfoTask *task,
-                                 UfoBuffer **inputs,
-                                 UfoRequisition *requisition)
+                                         UfoBuffer **inputs,
+                                         UfoRequisition *requisition,
+                                         GError **error)
 {
     UfoHessianKernelTaskPrivate *priv;
 

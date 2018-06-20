@@ -72,7 +72,8 @@ ufo_get_dup_circ_task_setup (UfoTask *task,
 static void
 ufo_get_dup_circ_task_get_requisition (UfoTask *task,
                                        UfoBuffer **inputs,
-                                       UfoRequisition *requisition)
+                                       UfoRequisition *requisition,
+                                       GError **error)
 {
     (void) task;
     ufo_buffer_get_requisition (inputs[0], requisition);

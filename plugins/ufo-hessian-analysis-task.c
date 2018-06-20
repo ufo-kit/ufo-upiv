@@ -102,8 +102,9 @@ ufo_hessian_analysis_task_setup (UfoTask *task,
 
 static void
 ufo_hessian_analysis_task_get_requisition (UfoTask *task,
-                                 UfoBuffer **inputs,
-                                 UfoRequisition *requisition)
+                                           UfoBuffer **inputs,
+                                           UfoRequisition *requisition,
+                                           GError **error)
 {
     UfoRequisition req0;
     ufo_buffer_get_requisition (inputs[0], &req0);

@@ -78,7 +78,8 @@ ufo_filter_particle_task_setup (UfoTask *task,
 static void
 ufo_filter_particle_task_get_requisition (UfoTask *task,
                                           UfoBuffer **inputs,
-                                          UfoRequisition *requisition)
+                                          UfoRequisition *requisition,
+                                          GError **error)
 {
     (void) inputs;
 

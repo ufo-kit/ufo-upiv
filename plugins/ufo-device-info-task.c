@@ -60,8 +60,9 @@ ufo_device_info_task_setup (UfoTask *task,
 
 static void
 ufo_device_info_task_get_requisition (UfoTask *task,
-                                 UfoBuffer **inputs,
-                                 UfoRequisition *requisition)
+                                      UfoBuffer **inputs,
+                                      UfoRequisition *requisition,
+                                      GError **error)
 {
     requisition->n_dims = 1;
     requisition->dims[0] = 1;
